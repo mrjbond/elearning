@@ -30,13 +30,16 @@ defmodule StationWestminster.LineUpdatesConsumers do
   end
 
   def start_link(_opts) do
+    opts = [name: Module.concat(__MODULE__, Supervisor)]
+    Supervisor.start_link(__MODULE__, nil, opts)
+  end
+
+  def init(nil) do
     children =
       @lines
       |> Enum.map(&Module.concat(__MODULE__, &1))
 
-      # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: StationWestminster.LineUpdatesConsumers.Supervisor]
-    Supervisor.start_link(children, opts)
+    opts = [strategy: :one_for_one]
+    Supervisor.init(children, opts)
   end
 end
