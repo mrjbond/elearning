@@ -7,8 +7,12 @@ defmodule Alerts.Application do
 
   def start(_type, _args) do
     children = [
+      LineUpdates.Registry,
+      LineUpdates.LineUpdateProducer,
+      StationUpdates.Registry,
       StationUpdates.StationUpdateProducer,
-      LineUpdates.LineUpdateProducer
+      StatusUpdates.PerpetualUpdater,
+      {Task.Supervisor, name: TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

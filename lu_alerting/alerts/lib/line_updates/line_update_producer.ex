@@ -3,13 +3,14 @@ defmodule LineUpdates.LineUpdateProducer do
   Publishes pre-configured events onto the "line_updates" exchange.
   """
 
-  alias Events.LineUpdate
+  alias Events.LineUpdateEvent
 
   use RabbitMQ.Producer, exchange: "line_updates"
 
-  def publish_line_update(%LineUpdate{} = event, opts) do
+  def publish_event(%LineUpdateEvent{} = event, opts \\ []) do
     opts =
       Keyword.merge(opts,
+        correlation_id: event.event_id,
         content_type: "application/json"
         # mandatory: true
       )

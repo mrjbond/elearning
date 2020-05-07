@@ -3,13 +3,14 @@ defmodule StationUpdates.StationUpdateProducer do
   Publishes pre-configured events onto the "station_updates" exchange.
   """
 
-  alias Events.StationUpdate
+  alias Events.StationUpdateEvent
 
   use RabbitMQ.Producer, exchange: "station_updates"
 
-  def publish_station_update(%StationUpdate{} = event, opts) do
+  def publish_event(%StationUpdateEvent{} = event, opts \\ []) do
     opts =
       Keyword.merge(opts,
+        correlation_id: event.event_id,
         content_type: "application/json"
         # mandatory: true
       )
