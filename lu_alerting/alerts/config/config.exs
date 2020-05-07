@@ -1,8 +1,6 @@
 import Config
 
-config :logger, :console,
-  level: :debug,
-  metadata: :all
+config :logger, :console, level: :debug
 
 config :logger, handle_otp_reports: false
 
