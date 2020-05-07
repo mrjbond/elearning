@@ -1,0 +1,22 @@
+# Dummy
+
+**TODO: Add description**
+
+To get the bible, run `curl https://www.gutenberg.org/cache/epub/30/pg30.txt -o the_bible`.
+
+## Installation
+
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+by adding `dummy` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:dummy, "~> 0.1.0"}
+  ]
+end
+```
+
+Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
+and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
+be found at [https://hexdocs.pm/dummy](https://hexdocs.pm/dummy).
