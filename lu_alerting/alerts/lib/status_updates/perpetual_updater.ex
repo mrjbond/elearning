@@ -16,7 +16,7 @@ defmodule StatusUpdates.PerpetualUpdater do
 
   @impl true
   def init(nil) do
-    Process.send_after(@this_module, :push_updates, @push_interval)
+    _ref = Process.send_after(@this_module, :push_updates, @push_interval)
     {:ok, nil}
   end
 

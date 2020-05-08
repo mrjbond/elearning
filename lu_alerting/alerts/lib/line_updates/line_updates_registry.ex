@@ -2,12 +2,14 @@ defmodule LineUpdates.Registry do
   use GenServer
 
   @lines ~w(
+    bakerloo
     central
     circle
     district
     hammersmith_and_city
     jubilee
     metropolitan
+    northern
     picadilly
     victoria
     waterloo_and_city
@@ -65,15 +67,4 @@ defmodule LineUpdates.Registry do
   def handle_call(:list_updates, _from, %State{registry: registry} = state) do
     {:reply, :ets.tab2list(registry), state}
   end
-
-  # def add_update(line_id, description) when line_id in @lines do
-  #   correlation_id = UUID.uuid4()
-
-  #   update = %{id: UUID.uuid4(), line_id: line_id, description: description}
-  #   event = LineUpdate.suspension(update)
-
-  #   {:ok, _seq_no} = LineUpdateProducer.publish_line_update(event, correlation_id: correlation_id)
-
-  #   {:ok, correlation_id}
-  # end
 end

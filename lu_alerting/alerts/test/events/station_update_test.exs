@@ -1,26 +1,24 @@
-defmodule EventsTest.StationUpdate do
-  alias Events.StationUpdate
+defmodule EventsTest.StationUpdateEvent do
+  alias Events.StationUpdateEvent
 
   use ExUnit.Case
 
   test "new/1 produces a pre-configured event" do
-    alert_id = UUID.uuid4()
+    meta = [id: UUID.uuid4(), inserted_at: DateTime.utc_now()]
+    attrs = {:westminster, "Reduced escalator service.", meta}
 
-    attrs = %{
-      id: alert_id,
-      station_id: :westminster,
-      category: :engineering_works,
-      description: "Reduced escalator service due to planned engineering works."
-    }
-
-    assert %StationUpdate{
-             e_v: "1.0.0",
-             e_id: _,
-             id: ^alert_id,
-             created_at: _,
+    assert %StationUpdateEvent{
+             event_id: _,
+             event_version: "1.0.0",
+             event_type: :station_update,
+             event_created_at: _,
+             id: id,
+             inserted_at: inserted_at,
              station_id: :westminster,
-             category: :engineering_works,
-             description: "Reduced escalator service due to planned engineering works."
-           } = StationUpdate.new(attrs)
+             description: "Reduced escalator service."
+           } = StationUpdateEvent.new(attrs)
+
+    assert id === Keyword.get(meta, :id)
+    assert inserted_at === meta |> Keyword.get(:inserted_at) |> DateTime.to_iso8601()
   end
 end

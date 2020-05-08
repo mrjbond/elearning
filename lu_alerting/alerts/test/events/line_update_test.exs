@@ -1,45 +1,24 @@
-defmodule EventsTest.LineUpdate do
-  alias Events.LineUpdate
+defmodule EventsTest.LineUpdateEvent do
+  alias Events.LineUpdateEvent
 
   use ExUnit.Case
 
-  test "suspension/1 produces a pre-configured event" do
-    alert_id = UUID.uuid4()
+  test "new/1 produces a pre-configured event" do
+    meta = [id: UUID.uuid4(), inserted_at: DateTime.utc_now()]
+    attrs = {:circle, "The Circle line is part suspended.", meta}
 
-    attrs = %{
-      id: alert_id,
-      line_id: :circle,
-      description: "The Circle line is part suspended."
-    }
-
-    assert %LineUpdate{
-             e_v: "1.0.0",
-             e_id: _,
-             id: ^alert_id,
-             created_at: _,
+    assert %LineUpdateEvent{
+             event_id: _,
+             event_version: "1.0.0",
+             event_type: :line_update,
+             event_created_at: _,
+             id: id,
+             inserted_at: inserted_at,
              line_id: :circle,
-             category: :suspension,
              description: "The Circle line is part suspended."
-           } = LineUpdate.suspension(attrs)
-  end
+           } = LineUpdateEvent.new(attrs)
 
-  test "closure/1 produces a pre-configured event" do
-    alert_id = UUID.uuid4()
-
-    attrs = %{
-      id: alert_id,
-      line_id: :victoria,
-      description: "The Victoria line is part suspended."
-    }
-
-    assert %LineUpdate{
-             e_v: "1.0.0",
-             e_id: _,
-             id: ^alert_id,
-             created_at: _,
-             line_id: :victoria,
-             category: :closure,
-             description: "The Victoria line is part suspended."
-           } = LineUpdate.closure(attrs)
+    assert id === Keyword.get(meta, :id)
+    assert inserted_at === meta |> Keyword.get(:inserted_at) |> DateTime.to_iso8601()
   end
 end
