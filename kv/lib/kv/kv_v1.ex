@@ -1,37 +1,32 @@
 defmodule KV.V1 do
   @moduledoc """
-  V1 of the Key-Value server.
-
-  Uses a simple `receive` loop to:
-
-  1. process a request
-  2. send back a reply
+  Version 1 of our key-value server.
+  Implements a basic `receive` loop.
   """
 
   require Logger
 
   @doc """
-  Dequeues messages from the process mailbox through a `receive` loop.
+  Dequeues messages from the mailbox, processes them, and sends a reply to the caller.
+
+  New state is computed, with each `handle_message/1` and used to initialise the next `loop/1`.
   """
   def loop(state) when is_map(state) do
-    Logger.info("State is #{inspect(state)}")
-
     receive do
-      {:get, key, caller} ->
-        Logger.debug("Get #{key}")
-        value = Map.get(state, key)
-        send(caller, value)
-        loop(state)
-
-      {:put, key, value, caller} ->
-        Logger.debug("Put #{key}: #{value}")
-        next_state = Map.put(state, key, value)
-        send(caller, next_state)
-        loop(next_state)
-
-      message ->
-        Logger.warn("Received unknown message: #{inspect(message)}")
-        loop(state)
+      message -> message |> handle_message(state) |> loop()
     end
+  end
+
+  defp handle_message({:get, key, caller}, state) when is_atom(key) and is_pid(caller) do
+    value = Map.get(state, key)
+    send(caller, value)
+    state
+  end
+
+  defp handle_message({:put, key, value, caller}, state)
+       when is_atom(key) and is_integer(value) and is_pid(caller) do
+    next_state = Map.put(state, key, value)
+    send(caller, :ok)
+    next_state
   end
 end
