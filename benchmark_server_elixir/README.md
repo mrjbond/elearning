@@ -8,14 +8,19 @@ You may need to [increase your File Descriptor Limit](https://docs.riak.com/riak
 
 Also see the below links;
 
-- https://docs.riak.com/riak/kv/latest/using/performance/erlang/index.html#warning-messages
-- https://elixirforum.com/t/getting-emfile-even-thou-ulimit-is-set-and-erl-max-ports-set-to-65536/15799
-- https://www.slideshare.net/petegamache/real-world-elixir-deployment
-- https://hexdocs.pm/mix/Mix.Tasks.Release.html
+-   <https://docs.riak.com/riak/kv/latest/using/performance/erlang/index.html#warning-messages>
+-   <https://elixirforum.com/t/getting-emfile-even-thou-ulimit-is-set-and-erl-max-ports-set-to-65536/15799>
+-   <https://www.slideshare.net/petegamache/real-world-elixir-deployment>
+-   <https://hexdocs.pm/mix/Mix.Tasks.Release.html>
 
 Use `:erlang.system_info(:port_limit)` to verify.
 
 ## Test results
+
+Using [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) on macOS Catalina (10.15.4), MacBook Pro (16-inch, 2019):
+
+-   Processor: 2.4 GHz 8-Core Intel Core i9;
+-   Memory: 64 GB 2667 MHz DDR4
 
 ```bash
 ab -n 2000 -c 124 'http://127.0.0.1:3000/bytes?rounds=1'
