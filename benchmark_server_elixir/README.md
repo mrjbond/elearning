@@ -1,5 +1,12 @@
 # A simple benchmark server (Elixir)
 
+Simulates a server capable of handling IO (file-read) and controlled computation load (sha256 rounds).
+
+The request handler performs the following operations:
+
+1.  reads (sync, _not_ using streams) a 64kB file (random bytes); and
+2.  computes a sha256 hash `n`-times (configurable via the `rounds` query parameter).
+
 ## Table of contents
 
 -   [Demo - testing](#demo---testing)

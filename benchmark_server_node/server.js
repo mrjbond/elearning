@@ -11,7 +11,8 @@ app.get("/bytes", ({ query }, response) => {
   const { rounds = "10" } = query;
   const roundsArray = [...Array(parseInt(rounds)).keys()];
 
-  // Should really be done via `fs.createReadStream`.
+  // Could/should be done using streams – performance might vary depending on the file-size.
+  // To keep it simple, the Elixir counterpart does NOT use streams either.
   readFile(fileName, (err, data) => {
     if (err) {
       response.status(500).send("500 Internal Server Error");

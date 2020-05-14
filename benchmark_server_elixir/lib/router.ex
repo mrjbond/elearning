@@ -13,6 +13,8 @@ defmodule BenchmarkServer.Router do
       |> fetch_query_params()
       |> get_rounds_from_query_params()
 
+    # Could/should be done using streams – performance might vary depending on the file-size.
+    # To keep it simple, the Node.js counterpart does NOT use streams either.
     contents = File.read!(@file_name)
 
     initial_hash = :crypto.hash(:sha256, contents)
