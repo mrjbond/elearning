@@ -1,4 +1,4 @@
-# A simple benchmark server (Elixir)
+# A simple benchmark server (Node.js)
 
 ## Table of contents
 
