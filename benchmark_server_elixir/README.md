@@ -7,6 +7,8 @@ The request handler performs the following operations:
 1.  reads (sync, _not_ using streams) a 64kB file (random bytes); and
 2.  computes a sha256 hash `n`-times (configurable via the `rounds` query parameter).
 
+⚠️ These tests were not performed to favour one technology/platform over the other. Rather, this is a simple exercise to help others understand where and under which contexts to use which. For example, it's well-known that Node.js is _not_ the preferred choice for performing (heavy, or otherwise) computation at scale.
+
 ## Table of contents
 
 -   [Demo - testing](#demo---testing)
