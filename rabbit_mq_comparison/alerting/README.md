@@ -1,6 +1,6 @@
 # Alerting
 
-An attempt at objectively assessing various RabbitMQ clients – specifically their publishing (`Producer`) capabilities.
+Assessing **reliable publishing** with `gen_rmq` and `rabbit_mq`.
 
 We will bild a very simple London Underground control centre and look at the following criteria:
 
@@ -9,7 +9,7 @@ We will bild a very simple London Underground control centre and look at the fol
     -   Supervision
     -   Config & Defaults
     -   Logging
--   Performance (confirm mode)
+-   Performance (confirm mode only)
 -   Resilience
     -   Supervision strategies
     -   Error/Exception handling and recovery
@@ -143,6 +143,8 @@ This is the resulting supervision tree.
 
 Based on this diagram, it's not immediately obvious how the underlying connection is started and whether and how it's linked to the Publisher. I looked at the source code and it seems as though the connection is established "inside" the Publisher and kept in its (`GenServer`) state.
 
+Initially, `rabbit_mq` was implemented in a similar way.
+
 #### Configuration & Defaults
 
 -   Publishing app id is [configurable and defaults to `:gen_rmq`](https://github.com/meltwater/gen_rmq/blob/v2.6.1/lib/publisher.ex#L51)
@@ -166,7 +168,7 @@ defmodule Producers.RabbitMQ.StationUpdatesProducer do
 end
 ```
 
-There is no implicit declaration of exchanges or queues.
+There is no implicit declaration of exchanges or queues, users are expected to already have a pre-defined routing topology, or use the `RabbitMQ.Topology` module to do so at the start of their application. This way, the entire routing topology is kept in one place.
 
 #### Supervision
 
@@ -182,13 +184,22 @@ This is the resulting supervision tree.
 
 ![rabbit_mq Publisher setup](assets/rabbit_mq_supervision_tree.png)
 
-It's a little more involved, but I immediately see _what_ my Producer does. There is a dedicated connection, and a pool of producer workers.
+It's a little more involved, but I can see what my application does without having to look at the underlying implementation. Upon starting, `RabbitMQ.Producer` established a dedicated connection, and a pool of 3 producer workers (3 is the default).
 
 #### Configuration & Defaults
 
 TBC
 
 ## 2. Performance (confirm mode)
+
+The following tests were performed on:
+
+-   Processor: 2.4 GHz 8-Core Intel Core i9;
+-   Memory: 64 GB 2667 MHz DDR4
+
+Running RabbitMQ _locally_ via [this docker-compose.yaml](docker-compose.yaml).
+
+The Benchmark module can be found [here](lib/benchmarks/publish.ex).
 
 ### `get_rmq` v2.6.1
 

@@ -23,7 +23,6 @@ defmodule Alerting.MixProject do
   defp deps do
     [
       {:gen_rmq, "~> 2.6.1"},
-      {:rabbit, "~> 0.9"},
       {:rabbit_mq, "~> 0.0.19"},
       {:benchee, "~> 1.0", only: :dev}
     ]
