@@ -1,10 +1,10 @@
 defmodule Counter do
   use GenServer
 
+  require Logger
+
   @this_module __MODULE__
   @timeout 1_000
-
-  require Logger
 
   def start_link(initial_count) when is_integer(initial_count) do
     GenServer.start_link(@this_module, initial_count, name: @this_module)
