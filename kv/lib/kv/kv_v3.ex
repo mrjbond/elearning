@@ -1,8 +1,6 @@
-defmodule KV.V3 do
+defmodule KV do
   @moduledoc """
-  V3 of the Key-Value server.
-
-  Implemented as a `GenServer`.
+  Key-Value server implemented as a `GenServer`.
   """
 
   require Logger
@@ -12,10 +10,12 @@ defmodule KV.V3 do
   @this_module __MODULE__
 
   @doc """
-  Starts this module as a named `GenServer`.
+  Starts this module as `GenServer`.
+
+  The process won't be named so that we can start as many as we like.
   """
   def start_link(initial_state) when is_map(initial_state) do
-    GenServer.start_link(@this_module, initial_state, name: @this_module)
+    GenServer.start_link(@this_module, initial_state)
   end
 
   @impl true
@@ -25,18 +25,20 @@ defmodule KV.V3 do
 
   # Public APIs
 
-  def get(key) when is_atom(key) do
-    GenServer.call(@this_module, {:get, key})
+  def get(name, key) when is_atom(key) do
+    GenServer.call(name, {:get, key})
   end
 
-  def put(key, value) when is_atom(key) and is_integer(value) do
-    GenServer.cast(@this_module, {:put, key, value})
+  def put(name, key, value) when is_atom(key) and is_integer(value) do
+    GenServer.cast(name, {:put, key, value})
   end
 
   # GenServer Callbacks
 
   @impl true
   def handle_call({:get, key}, _from, state) do
+    Logger.debug("[#{inspect(node())}] Get #{key}...")
+
     reply =
       state
       |> Map.get(key)
@@ -50,6 +52,8 @@ defmodule KV.V3 do
 
   @impl true
   def handle_cast({:put, key, value}, state) do
+    Logger.debug("[#{inspect(node())}] Set #{key}: #{value}...")
+
     next_state = Map.put(state, key, value)
     {:noreply, next_state}
   end

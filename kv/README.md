@@ -63,9 +63,7 @@ We will see the following.
 
 Let's try to send a message to our server that we know it won't be able to handle.
 
-```
-iex> send(pid, :unknown_command)
-```
+    iex> send(pid, :unknown_command)
 
 We will immediately be told that the process crashed:
 
@@ -202,14 +200,41 @@ Again, we see that our process is no longer alive, however this time our `Task.S
 
 To verify:
 
-```
-iex> Task.Supervisor.children(TaskSupervisor)
-[#PID<0.192.0>, #PID<0.193.0>, #PID<0.194.0>, #PID<0.195.0>, #PID<0.196.0>,
- #PID<0.197.0>, #PID<0.198.0>, #PID<0.199.0>, #PID<0.200.0>, #PID<0.201.0>,
- #PID<0.202.0>, #PID<0.203.0>, #PID<0.204.0>, #PID<0.205.0>, #PID<0.206.0>,
- #PID<0.208.0>, #PID<0.209.0>, #PID<0.210.0>, #PID<0.211.0>, #PID<0.3752.0>]
-```
+    iex> Task.Supervisor.children(TaskSupervisor)
+    [#PID<0.192.0>, #PID<0.193.0>, #PID<0.194.0>, #PID<0.195.0>, #PID<0.196.0>,
+     #PID<0.197.0>, #PID<0.198.0>, #PID<0.199.0>, #PID<0.200.0>, #PID<0.201.0>,
+     #PID<0.202.0>, #PID<0.203.0>, #PID<0.204.0>, #PID<0.205.0>, #PID<0.206.0>,
+     #PID<0.208.0>, #PID<0.209.0>, #PID<0.210.0>, #PID<0.211.0>, #PID<0.3752.0>]
 
 This is what enables Erlang and Elixir projects to stay relatively clean and simple, for it encourages developers to code primarily "for the happy path".
 
 "Thing fail" and the runtime has been designed with this in mind. Be sure to take advantage of that 😎!
+
+### KV
+
+#### Distribution
+
+Let's start two named nodes:
+
+    iex --sname foo@localhost -S mix
+
+    iex --sname bar@localhost -S mix
+
+To get the list of children on another node:
+
+```elixir
+task = Task.Supervisor.async({TaskSupervisor, :bar@localhost}, fn -> Supervisor.which_children(KV.Supervisor) end)
+remote_children = Task.await(task)
+```
+
+Pick a random child:
+
+```elixir
+random_server = remote_children |> Enum.random() |> elem(1)
+```
+
+Retrieve a value from one of the servers on a remote node:
+
+```elixir
+KV.get(random_server, :milk)
+```
